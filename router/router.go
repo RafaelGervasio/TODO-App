@@ -20,7 +20,14 @@ func StartRouter (dbConn *sql.DB) {
 		}
 	})
 
-	mux.HandleFunc("/register", handlers.RegisterHandler)
+    mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+        handlers.RegisterHandler(w, r, dbConn)
+    })
+
+    mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+        handlers.LoginHandler(w, r, dbConn)
+    })
+
 
 
 	fmt.Println("Server running on http://localhost:8080")
