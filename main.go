@@ -8,6 +8,12 @@ import (
 
 
 func main() {	
-	router.StartRouter()
+	dbConn, err := middleware.InitDB("todo.db")
+	if err != nil {
+		log.Fatal("Error initializing database: ", err)
+	}
+	defer dbConn.Close()
+
+	router.StartRouter(dbConn)
 }
 

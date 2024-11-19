@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"TODO-App/handlers"
+	"database/sql"
 )
 
-func StartRouter () {
+func StartRouter (dbConn *sql.DB) {
 	mux := http.NewServeMux()
 
 
