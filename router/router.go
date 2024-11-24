@@ -12,7 +12,7 @@ func StartRouter (dbConn *sql.DB) {
 
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
+		if r.Method == http.MethodGet 	{
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintln(w, "200 OK")
 		} else {
