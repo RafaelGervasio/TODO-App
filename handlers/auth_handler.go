@@ -13,7 +13,6 @@ import (
 )
 
 
-var secretKey = []byte("secureSecretText")
 
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
@@ -93,7 +92,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := token.SignedString(secretKey)
+	signedToken, err := token.SignedString(middleware.GetJWTSecret())
 	if err != nil {
 		http.Error(w, "Could not generate token", http.StatusInternalServerError)
 		return

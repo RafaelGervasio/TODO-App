@@ -8,10 +8,12 @@ import (
     "TODO-App/models"
     "strings"
     "net/http"
+    "time"
+    "github.com/joho/godotenv"
+    "os"
+    "log"
 )
 
-
-var secretKey = []byte("secureSecretText")
 
 
 // InitDB initializes the database connection
@@ -27,7 +29,24 @@ func InitDB(dbName string) (*sql.DB, error) {
 
     fmt.Println("Database connected successfully")
     return db, nil
+
 }
+
+
+func GetJWTSecret() []byte {
+    err := godotenv.Load(".env")
+    if err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
+
+    secretKey := os.Getenv("JWT_SECRET")
+    if secretKey == "" {
+        log.Fatal("JWT_SECRET is not set in the .env file")
+    }
+    
+    return []byte(secretKey)
+}
+
 
 
 type CustomClaims struct {
@@ -50,7 +69,7 @@ func AuthenticateRequest(r *http.Request, dbConn *sql.DB) (models.User, error) {
     tokenString := bearerToken[1]
 
     token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-        return secretKey, nil
+        return GetJWTSecret(), nil
     })
 
     if err != nil {
@@ -60,6 +79,10 @@ func AuthenticateRequest(r *http.Request, dbConn *sql.DB) (models.User, error) {
     claims, ok := token.Claims.(*CustomClaims)
     if !ok {
         return models.User{}, fmt.Errorf("invalid token claims")
+    }
+
+    if claims.ExpiresAt < time.Now().UTC().Unix() {
+        return models.User{}, fmt.Errorf("token has expired")
     }
 
     var user models.User
