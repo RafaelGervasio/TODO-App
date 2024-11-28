@@ -50,7 +50,7 @@ func GetJWTSecret() []byte {
 
 
 type CustomClaims struct {
-    Username string `json:"username"`
+    Email string `json:"email"`
     jwt.StandardClaims
 }
 
@@ -86,8 +86,8 @@ func AuthenticateRequest(r *http.Request, dbConn *sql.DB) (models.User, error) {
     }
 
     var user models.User
-    query := `SELECT user_id, name, email FROM users WHERE name = ?`
-    err = dbConn.QueryRow(query, claims.Username).Scan(&user.UserID, &user.Name, &user.Email)
+    query := `SELECT user_id, name, email FROM users WHERE email = ?`
+    err = dbConn.QueryRow(query, claims.Email).Scan(&user.UserID, &user.Name, &user.Email)
     if err != nil {
         return models.User{}, fmt.Errorf("user not found")
     }

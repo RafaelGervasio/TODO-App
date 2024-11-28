@@ -83,7 +83,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 	}
 
 	claims := middleware.CustomClaims{
-		Username: user.Name,
+		Email: user.Email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(), // Set expiration time
 			Issuer:    "TODO-App",
